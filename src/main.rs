@@ -10,6 +10,7 @@ pub static RESET_VECTOR: unsafe extern "C" fn() -> ! = Reset;
 
 use cortex_m_semihosting::hprintln;
 use core::ptr;
+mod systick;
 
 #[no_mangle]
 pub unsafe extern "C" fn Reset() -> ! {
@@ -29,10 +30,58 @@ pub unsafe extern "C" fn Reset() -> ! {
 
     hprintln!("Hello World").unwrap();
 
+    systick::init();
+
     loop {}
 }
 
 #[panic_handler]
 fn panic(_panic: &PanicInfo<'_>) -> ! {
     loop {}
+}
+
+pub union Vector {
+    reserved: u32,
+    handler: unsafe extern "C" fn(),
+}
+
+extern "C" {
+    fn NMI();
+    fn HardFault();
+    fn MemManage();
+    fn BusFault();
+    fn UsageFault();
+    fn SVCall();
+    fn PendSV();
+}
+
+#[link_section = ".vector_table.exceptions"]
+#[no_mangle]
+pub static EXCEPTIONS: [Vector; 14] = [
+    Vector { handler: NMI },
+    Vector { handler: HardFault },
+    Vector { handler: MemManage },
+    Vector { handler: BusFault },
+    Vector {
+        handler: UsageFault,
+    },
+    Vector { reserved: 0 },
+    Vector { reserved: 0 },
+    Vector { reserved: 0 },
+    Vector { reserved: 0 },
+    Vector { handler: SVCall },
+    Vector { reserved: 0 },
+    Vector { reserved: 0 },
+    Vector { handler: PendSV },
+    Vector { handler: SysTick },
+];
+
+#[no_mangle]
+pub extern "C" fn DefaultExceptionHandler() {
+    loop {}
+}
+
+#[no_mangle]
+pub extern "C" fn SysTick() {
+    hprintln!("Systick").unwrap();
 }
