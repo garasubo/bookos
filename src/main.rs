@@ -1,6 +1,6 @@
 #![no_main]
 #![no_std]
-#![feature(asm)]
+#![feature(asm, llvm_asm)]
 
 use core::panic::PanicInfo;
 
@@ -132,14 +132,14 @@ pub unsafe extern "C" fn SVCall() {
         movt lr, #0xffff
         bx lr
         "
-    ::::"volatile");
+    );
 }
 
 extern "C" fn app_main() -> ! {
     let mut i = 0;
     loop {
         hprintln!("App: {}", i).unwrap();
-        unsafe { asm!("svc 0"::::"volatile"); }
+        unsafe { asm!("svc 0"); }
         i += 1;
     }
 }
@@ -147,13 +147,13 @@ extern "C" fn app_main() -> ! {
 extern "C" fn app_main2() -> ! {
     loop {
         hprintln!("App2").unwrap();
-        unsafe { asm!("svc 0"::::"volatile"); }
+        unsafe { asm!("svc 0"); }
     }
 }
 
 extern "C" fn app_main3() -> ! {
     loop {
         hprintln!("App3").unwrap();
-        unsafe { asm!("svc 0"::::"volatile"); }
+        unsafe { asm!("svc 0"); }
     }
 }
