@@ -50,7 +50,7 @@ impl<'a> Process<'a> {
                 "
                 :"={r0}"(self.sp)
                 :"{r0}"(self.sp), "{r1}"(&self.regs)
-                :"r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11"
+                :"r4", "r5", "r6", "r8", "r9", "r10", "r11"
                 :"volatile"
             );
         }
