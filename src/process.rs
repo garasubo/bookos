@@ -40,7 +40,7 @@ impl<'a> Process<'a> {
 
     pub fn exec(&mut self) {
         unsafe {
-            asm!(
+            llvm_asm!(
                 "
                 msr psp, r0
                 ldmia r1, {r4-r11}
@@ -50,7 +50,7 @@ impl<'a> Process<'a> {
                 "
                 :"={r0}"(self.sp)
                 :"{r0}"(self.sp), "{r1}"(&self.regs)
-                :"r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11"
+                :"r4", "r5", "r6", "r8", "r9", "r10", "r11"
                 :"volatile"
             );
         }
