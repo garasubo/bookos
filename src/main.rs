@@ -120,6 +120,7 @@ pub unsafe extern "C" fn SVCall() {
         /* switch thread mode to unprivileged */
         mov r0, #1
         msr CONTROL, r0
+        isb
         movw lr, #0xfffd
         movt lr, #0xffff
         bx lr
@@ -127,6 +128,7 @@ pub unsafe extern "C" fn SVCall() {
         to_kernel:
         mov r0, #0
         msr CONTROL, r0
+        isb
 
         movw lr, #0xfff9
         movt lr, #0xffff
